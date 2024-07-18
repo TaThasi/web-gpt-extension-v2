@@ -2,15 +2,15 @@
   import NavbarVue from "../../components/Navbar.vue";
 
   import PromptCard from '../../components/PromptCard.vue';
-  
-  
 
 </script>
 
 <template>
-  <div class="w-full h-[100vh] p-4">
+  <div class="w-full h-full">
     <NavbarVue />
-    <PromptCard />
+    <div class=" h-full w-full relative">
+        <PromptCard />
+    </div>
   </div>
 </template>
 
