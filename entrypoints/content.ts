@@ -15,7 +15,7 @@ export default defineContentScript({
         "Content-Type": "application/json",
       },
     });
-    const data: Prompt[] = await res.json();
+    const data: Prompt[] = await res.json().then(response => response.data);
     savePrompts(data);
 
     const ui = await createShadowRootUi(ctx, {
