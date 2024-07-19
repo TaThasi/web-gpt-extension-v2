@@ -1,8 +1,6 @@
 <script lang="ts" setup>
   import NavbarVue from "../../components/Navbar.vue";
-
   import PromptCard from '../../components/PromptCard.vue';
-
 </script>
 
 <template>

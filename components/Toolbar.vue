@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="toolbar">
       <select class="language-select">
         <option v-for="language in languages" :key="language.value" :value="language.value">
@@ -21,4 +21,4 @@
   <style scoped>
  
   </style>
-  
+   -->
