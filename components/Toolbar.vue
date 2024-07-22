@@ -1,24 +1,27 @@
-<!-- <template>
-    <div class="toolbar">
-      <select class="language-select">
-        <option v-for="language in languages" :key="language.value" :value="language.value">
-          {{ language.text }}
+<template>
+    <div class="">
+      <select class=" px-4 py-2 rounded-lg text-xl" v-model="selectedLanguage" @change="updateLanguage">
+        <option v-for="language in languages" :key="language.value" :value="language.value"
+        >
+          {{ language.value }}
         </option>
       </select>
     </div>
   </template>
   
   <script lang="ts" setup>
-        const languages = [
-          { value: 'en', text: 'English' },
-          { value: 'es', text: 'Spanish' },
-          { value: 'fr', text: 'French' },
-          { value: 'de', text: 'German' },
-          // Add more languages as needed
-        ]
+    import { ref } from 'vue';
+
+    const languages = [
+      { value: 'English' },
+      { value: 'Vietnamese' },
+      { value: 'Japan' },
+      { value: 'German' },
+
+    ]
+    const language = localStorage.getItem('language') as string;
+    const selectedLanguage = ref<string>(language || "English");
+    const updateLanguage = async () => {   
+      localStorage.setItem('language', selectedLanguage.value);
+    }
   </script>
-  
-  <style scoped>
- 
-  </style>
-   -->

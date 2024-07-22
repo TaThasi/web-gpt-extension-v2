@@ -1,16 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+/* 
 #example-ui-container {
     position: fixed;
     top: 5rem;
     left: 0;
-    z-index: 10000;
     width: 100%;
-    max-height: 46rem;
-    /* background-color: white; */
-    border-radius: 10px;
-    overflow: hidden;
+    background-color: black;
+    height: 30rem;
   }
-  
+   */
+
+.custom-scroll {
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+}
+
+.custom-scroll::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}

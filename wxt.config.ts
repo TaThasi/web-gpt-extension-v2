@@ -4,11 +4,15 @@ export default defineConfig({
   modules: ['@wxt-dev/module-vue'],
   manifest: {
     permissions: ['storage', 'tabs', 'scripting'],
+    action: {
+      default_popup: ''
+    },
     web_accessible_resources: [
       {
-        resources: ['example-iframe.html'],
+        resources: ['index.html'],
         matches: [ "*://*/*"],
       },
     ],
+    
   },
 });

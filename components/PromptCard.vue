@@ -1,17 +1,24 @@
+<!-- PromptCard.vue -->
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { Prompt } from '@/utils/type';
-import { getStoredPrompts } from '../utils/prompt.manager';
+
 const prompts = ref<Prompt[]>([]);
 const choiedPrompt = ref<string>('');
+
 onMounted(async () => {
-  try {
-    const savedPrompts = await getStoredPrompts();
-    prompts.value = savedPrompts;
-  } catch (error) {
-    console.error('Failed to load prompts:', error);
-  }
+    try {
+      const res = await fetch("http://localhost:8000/api/prompt", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data: Prompt[] = await res.json().then(response => response.data);
+      prompts.value = data;
+    } catch (error) {
+      console.error('Error fetching prompts:', error);
+    }
 });
+
 function handleCardClick(id: string) {
   const selectedPrompt = prompts.value.find((prompt: Prompt) => prompt.id === id);
   choiedPrompt.value = id;
@@ -22,12 +29,10 @@ function handleCardClick(id: string) {
     window.dispatchEvent(event);
   }
 }
-  
 </script>
 
-
 <template>
-  <div class="p-4 mb-10">
+  <div class="p-4 mb-10 h-full  overflow-auto custom-scroll">
     <div class="grid grid-cols-2 gap-4 p-4">
       <div
         v-for="card in prompts"
@@ -47,7 +52,7 @@ function handleCardClick(id: string) {
       >
         <div class="flex justify-between items-center mb-2">
           <div class="flex gap-x-2">
-            <span v-for="tag in card.tags" :key="tag"  class="text-xs text-gray-500">{{ tag }}</span>
+            <span v-for="tag in card.tags" :key="tag" class="text-xs text-gray-500">{{ tag }}</span>
           </div>
           <span class="text-xs text-gray-500">{{ card.author }}</span>
         </div>
@@ -59,10 +64,9 @@ function handleCardClick(id: string) {
   </div>
 </template>
 
-
 <style scoped>
-/* Optional custom styling */
 .grid {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
+
 </style>

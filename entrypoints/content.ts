@@ -1,46 +1,30 @@
 import '../entrypoints/popup/style.css';
 import { createApp } from 'vue';
 import App from '../entrypoints/popup/App.vue';
-import { savePrompts, getStoredPrompts } from '../utils/prompt.manager';
-import { Prompt } from '@/utils/type';
 
 export default defineContentScript({
-  matches: ['<all_urls>'], 
+  matches: ['https://chatgpt.com/'], 
   cssInjectionMode: 'ui',
 
   async main(ctx) {
-    async function fetchAndSavePrompts() {
-      try {
-        const res = await fetch("http://localhost:3000/prompt", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        const data: Prompt[] = await res.json().then(response => response.data);
-        savePrompts(data);
-      } catch (error) {
-        console.error('Error fetching prompts:', error);
-      }
-    }
-
-    await fetchAndSavePrompts();
-
+    
     const ui = await createShadowRootUi(ctx, {
       name: 'example-ui',
       position: 'overlay',
       onMount: (container) => {
-        container.id = 'example-ui-container';
-        
         const logoDiv = document.querySelector('[class="flex h-full flex-col items-center justify-center text-token-text-primary"]');
         const suggestDiv = document.querySelector('[class="absolute bottom-full left-0 right-0 z-20"]');
         
         if (logoDiv) {
           suggestDiv?.classList.add('hidden');
           logoDiv.classList.add('hidden');
-        }
-        
+        }        
         const app = createApp(App);
         app.mount(container);
       },
+
+
+
     });
 
     const text = document.querySelector('#prompt-textarea') as HTMLTextAreaElement;
@@ -66,33 +50,31 @@ export default defineContentScript({
     const promptUser = '[promptuser]';
     let fontdefaultValue = '';
     let endDefaultValue = '';
-
-    const setDefaults = () => {
+    const setDefaults = async () => {
+      // language = getUserConfig();
       const promptUserIndex = savedDefaults.indexOf(promptUser);
       fontdefaultValue = promptUserIndex !== -1 ? savedDefaults.slice(0, promptUserIndex) : '';
       endDefaultValue = promptUserIndex !== -1 ? savedDefaults.slice(promptUserIndex + promptUser.length) : '';
       console.log('Font default value:', savedDefaults);
     };
 
-
-
     function handleChange(event: Event) {
       const target = event.target as HTMLInputElement;
       userInput = target.value;
       console.log('User input:', userInput);
     }
-
-    function handleSubmit() {
+    async function handleSubmit() {
       try {
         if (!savedDefaults) {
           console.error('Saved defaults are not set');
           return;
         }
-        setDefaults();
-        const defaultValue = fontdefaultValue + userInput + endDefaultValue;
-        const combinedValue = defaultValue.trim();
-        console.log('Combined value:', combinedValue);
+        await setDefaults();
+        const language = localStorage.getItem('language') || 'English';
+        console.log('Language:', language);
+        const combinedValue = (fontdefaultValue + userInput + endDefaultValue  + " using " + language).trim();
         text.value = combinedValue;
+        console.log('Combined value:', combinedValue);
         console.log("Submit: ", combinedValue);
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -101,10 +83,12 @@ export default defineContentScript({
       }
     }
 
+
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Enter') {
         event.preventDefault();
         ui.remove();
+        
         handleSubmit();
       }
     }
